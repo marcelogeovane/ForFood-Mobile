@@ -5,20 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.fernando.teste_sqlite1.beans.Contato;
-import com.example.fernando.teste_sqlite1.servicos.ContatoDB;
+import com.example.fernando.teste_sqlite1.servicos.DataBase;
 
 import java.util.List;
 
 public class PrincipalActivity extends AppCompatActivity {
-    ContatoDB bd = null;
+    DataBase bd = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        bd = new ContatoDB(getBaseContext());
+        bd = new DataBase(getBaseContext());
 
         atualizaCampoTexto();
     }
