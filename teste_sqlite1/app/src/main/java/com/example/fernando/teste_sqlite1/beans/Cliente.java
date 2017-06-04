@@ -9,9 +9,9 @@ import java.io.Serializable;
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 6601006766832473959L;
 
+    private boolean check;
     private long codigo;
     private String nome;
-    private boolean check;
     private long telefone;
     private String endereco;
     private String senha;
@@ -88,6 +88,15 @@ public class Cliente implements Serializable {
 
     @Override
     public String toString() {
-        return "Contato{" + "nome='" + nome + '\'' + ", fone='" + telefone + '\'' + '}';
+        return "Cliente{" +
+                "check=" + check +
+                ", codigo=" + codigo +
+                ", nome='" + nome + '\'' +
+                ", telefone=" + telefone +
+                ", endereco='" + endereco + '\'' +
+                ", senha='" + senha + '\'' +
+                ", email='" + email + '\'' +
+                ", cpf=" + cpf +
+                '}';
     }
 }

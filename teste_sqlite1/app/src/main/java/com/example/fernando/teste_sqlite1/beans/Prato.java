@@ -55,4 +55,14 @@ public class Prato implements Serializable {
         this.tempo = tempo;
     }
 
+    @Override
+    public String toString() {
+        return "Prato{" +
+                "codigo=" + codigo +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", preco=" + preco +
+                ", tempo=" + tempo +
+                '}';
+    }
 }

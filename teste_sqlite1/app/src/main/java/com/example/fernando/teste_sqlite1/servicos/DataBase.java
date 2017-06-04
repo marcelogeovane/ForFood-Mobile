@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.fernando.teste_sqlite1.beans.Cliente;
+import com.example.fernando.teste_sqlite1.beans.Pedido;
+import com.example.fernando.teste_sqlite1.beans.Pedido_Prato;
 import com.example.fernando.teste_sqlite1.beans.Prato;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String TABELA1 = "cliente";
     private static final String TABELA2 = "prato";
     private static final String TABELA3 = "pedido";
-    private static final String TABELA4 = "PEDIDO_PRATO";
+    private static final String TABELA4 = "pedido_prato";
     private static final int VERSAO_BANCO = 1;
 
     public DataBase(Context context) {
@@ -32,7 +34,7 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Criando a Tabela " + TABELA1 + "...");
-        db.execSQL("create table if not exists " + TABELA2 + " (" +
+        db.execSQL("create table if not exists " + TABELA1 + " (" +
                 "cliCodigo integer primary key autoincrement," +
                 "cliCpf integer," +
                 "cliNome text," +
@@ -41,22 +43,26 @@ public class DataBase extends SQLiteOpenHelper {
                 "cliEmail text," +
                 "cliSenha text" +
                 ");");
-        Log.d(TAG, "Tabela " + TABELA3 + " criada com sucesso.");
+        Log.d(TAG, "Tabela " + TABELA1 + " criada com sucesso.");
+        //////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA2 + "...");
         db.execSQL("create table if not exists " + TABELA2 + " (" +
                 "praCodigo integer primary key autoincrement," +
                 "praNome text, " +
                 "praPreco integer," +
-                "praDescricao," +
-                "praTempo" +
+                "praDescricao text," +
+                "praTempo integer" +
                 ");");
-        Log.d(TAG, "Tabela " + TABELA3 + " criada com sucesso.");
+        Log.d(TAG, "Tabela " + TABELA2 + " criada com sucesso.");
+        /////////////////////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA3 + "...");
         db.execSQL("create table if not exists " + TABELA3 + " (" +
                 "pedCodigo integer primary key autoincrement," +
+                "pedStatus text," +
                 "cliente_cliCodigo integer" +
                 ");");
         Log.d(TAG, "Tabela " + TABELA3 + " criada com sucesso.");
+        ////////////////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA4 + "...");
         db.execSQL("create table if not exists " + TABELA4 + " (" +
                 "pedido_pedCodigo integer," +
@@ -236,9 +242,9 @@ public class DataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         try {
             // select * from cliente
-            Cursor c = db.query(TABELA1, null, null, null, null, null, null, null);
+            Cursor c = db.query(TABELA2, null, null, null, null, null, null, null);
 
-            return toList(c);
+            return Prato_toList(c);
         } finally {
             db.close();
         }
@@ -289,6 +295,209 @@ public class DataBase extends SQLiteOpenHelper {
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Insere um novo CONTATO, ou atualiza se já existe.
+    public long savePedido(Pedido p) {
+        long id = p.getCodigo();
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put("pedStatus", p.getStatus());
+            values.put("cliente_cliCodigo", p.getCliente_codigo());
+
+            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
+
+                String _id = String.valueOf(p.getCodigo());
+                String[] whereArgs = new String[]{_id};
+
+                // update contato set values = ... where _id=?
+                int count = db.update(TABELA3, values, "pedCodigo=?", whereArgs);
+
+                return count;
+            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
+                // insert into contato values (...)
+                id = db.insert(TABELA3, "", values);
+                return id;
+            }
+        } finally {
+            db.close();
+        }
+    }
+
+    // Deleta o CONTATO
+    public int deletePedido(Pedido p) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            // delete from contato where _id=?
+            int count = db.delete(TABELA3, "pedCodigo=?", new String[]{String.valueOf(p.getCodigo())});
+            Log.i(TAG, "Deletou [" + count + "] registro.");
+            return count;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    // Consulta a lista com todos os contatos
+    public List<Pedido> pedido_findAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            // select * from cliente
+            Cursor c = db.query(TABELA3, null, null, null, null, null, null, null);
+
+            return pedido_toList(c);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Consulta por sql testar depois
+    public List<Pedido> pedido_findBySql(String sql) {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor c = db.rawQuery(sql, null);
+            List<Pedido> pedidos = new ArrayList<Pedido>();
+
+            if (c.moveToFirst()) {
+                do {
+                    Pedido pedido = new Pedido();
+                    pedidos.add(pedido);
+
+                    // recupera os atributos de contatos
+                    pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
+                    pedido.setStatus(c.getString(c.getColumnIndex("pedStatus")));
+                    pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+                } while (c.moveToNext());
+            }
+            return pedidos;
+        } finally {
+            db.close();
+        }
+    }
+
+    // Lê o cursor e cria a lista de coatatos
+    private List<Pedido> pedido_toList(Cursor c) {
+        List<Pedido> pedidos = new ArrayList<Pedido>();
+
+        if (c.moveToFirst()) {
+            do {
+                Pedido pedido = new Pedido();
+                pedidos.add(pedido);
+
+                // recupera os atributos de contatos
+                pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
+                pedido.setStatus(c.getString(c.getColumnIndex("pedStatus")));
+                pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+
+            } while (c.moveToNext());
+        }
+        return pedidos;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Insere um novo CONTATO, ou atualiza se já existe.
+    public long savePedidoPrato(Pedido_Prato p) {
+        long id = p.getPedidoCodigo();
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put("prato_praCodigo", p.getPratoCodigo());
+            values.put("pedido_pedCodigo", p.getPedidoCodigo());
+
+            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
+
+                String _id = String.valueOf(p.getPedidoCodigo());
+                String[] whereArgs = new String[]{_id};
+
+                // update contato set values = ... where _id=?
+                int count = db.update(TABELA4, values, "pedCodigo=?", whereArgs);
+
+                return count;
+            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
+                // insert into contato values (...)
+                id = db.insert(TABELA4, "", values);
+                return id;
+            }
+        } finally {
+            db.close();
+        }
+    }
+
+    // Deleta o CONTATO
+    public int deletePedidoPrato(Pedido p) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            // delete from contato where _id=?
+            int count = db.delete(TABELA4, "pedCodigo=?", new String[]{String.valueOf(p.getCodigo())});
+            Log.i(TAG, "Deletou [" + count + "] registro.");
+            return count;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    // Consulta a lista com todos os contatos
+    public List<Pedido_Prato> pedidoPrato_findAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            // select * from cliente
+            Cursor c = db.query(TABELA4, null, null, null, null, null, null, null);
+
+            return pedidoPrato_toList(c);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Consulta por sql testar depois
+    public List<Pedido_Prato> pedidoPrato_findBySql(String sql) {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor c = db.rawQuery(sql, null);
+            List<Pedido_Prato> pedidosPratos = new ArrayList<Pedido_Prato>();
+
+            if (c.moveToFirst()) {
+                do {
+                    Pedido_Prato pedido_prato = new Pedido_Prato();
+                    pedidosPratos.add(pedido_prato);
+
+                    // recupera os atributos de contatos
+                    pedido_prato.setPedidoCodigo(c.getLong(c.getColumnIndex("pedido_pedCodigo")));
+                    pedido_prato.setPratoCodigo(c.getLong(c.getColumnIndex("prato_praCodigo")));
+
+                } while (c.moveToNext());
+            }
+            return pedidosPratos;
+        } finally {
+            db.close();
+        }
+    }
+
+    // Lê o cursor e cria a lista de coatatos
+    private List<Pedido_Prato> pedidoPrato_toList(Cursor c) {
+        List<Pedido_Prato> pedidos = new ArrayList<Pedido_Prato>();
+
+        if (c.moveToFirst()) {
+            do {
+                Pedido_Prato pedido_prato = new Pedido_Prato();
+                pedidos.add(pedido_prato);
+
+                // recupera os atributos de contatos
+                pedido_prato.setPedidoCodigo(c.getLong(c.getColumnIndex("pedido_pedCodigo")));
+                pedido_prato.setPratoCodigo(c.getLong(c.getColumnIndex("prato_praCodigo")));
+
+
+            } while (c.moveToNext());
+        }
+        return pedidos;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
     // Executa um SQL
     public void execSQL(String sql) {
