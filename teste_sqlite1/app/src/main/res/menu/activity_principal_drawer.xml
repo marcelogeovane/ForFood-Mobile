@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_opcao1"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/action_opcao1" />
+        <item
+            android:id="@+id/nav_opcao2"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/action_opcao2" />
+        <item
+            android:id="@+id/nav_opcao3"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/action_opcao3" />
+    </group>
+
+    <item android:title="...">
+        <menu>
+            <item
+                android:id="@+id/nav_como_funciona"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/action_como_funciona" />
+            <item
+                android:id="@+id/nav_sair"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/action_sair" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,92 +1,125 @@
 package com.example.fernando.teste_sqlite1;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.EditText;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.example.fernando.teste_sqlite1.beans.Cliente;
-import com.example.fernando.teste_sqlite1.beans.Pedido;
-import com.example.fernando.teste_sqlite1.beans.Pedido_Prato;
-import com.example.fernando.teste_sqlite1.beans.Prato;
-import com.example.fernando.teste_sqlite1.servicos.DataBase;
+import com.example.fernando.teste_sqlite1.view.fragments.Opcao1Fragment;
+import com.example.fernando.teste_sqlite1.view.fragments.Opcao2Fragment;
+import com.example.fernando.teste_sqlite1.view.fragments.Opcao3Fragment;
+import com.example.fernando.teste_sqlite1.view.fragments.WelcomeFragment;
 
-import java.util.List;
-
-public class PrincipalActivity extends AppCompatActivity {
-    DataBase bd = null;
+public class PrincipalActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        bd = new DataBase(getBaseContext());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        atualizaCampoTexto();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //fixa o layout vertical
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        //seta o fragment inicial
+        replaceFragment(new WelcomeFragment());
     }
 
-    public void onClickCadastrar(View v){
-        EditText etNome =  (EditText)findViewById(R.id.etNome);
-        EditText etTelefone =  (EditText)findViewById(R.id.etTelefone);
+    @Override
+    public void onBackPressed() {
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-
-        Cliente c = new Cliente();
-        c.setNome(etNome.getText().toString());
-        c.setTelefone(999);
-        c.setCpf(000);
-        c.setEndereco(etTelefone.getText()+"");
-        c.setSenha("teste");
-        c.setEmail("teste");
-        bd.saveCliente(c);
-
-
-
-        Prato p = new Prato();
-        p.setTempo(1);
-        p.setPreco(1);
-        p.setDescricao(etTelefone.getText()+"");
-        p.setNome(etNome.getText()+"");
-        bd.savePrato(p);
-
-        Pedido ped = new Pedido();
-        ped.setCliente_codigo(c.getCodigo());
-        ped.setStatus("Realizado");
-        bd.savePedido(ped);
-
-        Pedido_Prato pedPra = new Pedido_Prato();
-        pedPra.setPedidoCodigo(ped.getCodigo());
-        pedPra.setPratoCodigo(p.getCodigo());
-        bd.savePedidoPrato(pedPra);
-
-
-        atualizaCampoTexto();
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        replaceFragment(new WelcomeFragment());
 
     }
-    public void atualizaCampoTexto(){
-        EditText lista =  (EditText)findViewById(R.id.etLista);
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.principal, menu);
+        return true;
+    }
 
 
-        List<Prato> contatos = bd.Prato_findAll();
-        List<Cliente> clientes = bd.findAll();
-        List<Pedido> pedidos = bd.pedido_findAll();
-        List<Pedido_Prato> pedidosPratos = bd.pedidoPrato_findAll();
-        //List<Cliente> contatos = bd.findBySql("SELECT cliCodigo, cliNome, cliTelefone FROM cliente;");
 
-        String texto = "";
-        String texto2 = "";
-        String texto3 = "";
-        String texto4 = "";
-        for(int i = 0; i< contatos.size();i++){
-            texto +=  pedidosPratos.get(i).toString()+"\n";
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //evento do menu  no  canto superiror direito
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case (R.id.action_sobre):
+                Toast.makeText(getApplicationContext(), "Teste!", Toast.LENGTH_LONG).show();
+                break;
 
         }
-        lista.setText(texto);
+
+        return super.onOptionsItemSelected(item);
     }
 
-    public void onClickDeletaTudo(View v){
-        bd.execSQL("DELETE FROM cliente WHERE cliCodigo > 0;");
-        atualizaCampoTexto();
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.nav_opcao1:
+                Opcao1Fragment op1= new Opcao1Fragment();
+                replaceFragment(op1);
+                //Toast.makeText(getApplicationContext(), "Teste1!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.nav_opcao2:
+                Opcao2Fragment op2= new Opcao2Fragment();
+                replaceFragment(op2);
+                //Toast.makeText(getApplicationContext(), "Teste2!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.nav_opcao3:
+                Opcao3Fragment mdf = new Opcao3Fragment();
+                replaceFragment(mdf);
+                //Toast.makeText(getApplicationContext(), "Teste3!", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.nav_sair:
+                Toast.makeText(getApplicationContext(), "Teste6!", Toast.LENGTH_LONG).show();
+                break;
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.container_fragments, fragment, "TAG").addToBackStack(null).commit();
     }
 }
