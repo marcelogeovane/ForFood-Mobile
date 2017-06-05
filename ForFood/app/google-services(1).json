@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "296263667980",
+    "project_id": "firebase-forfood"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296263667980:android:346f0977c4152956",
+        "android_client_info": {
+          "package_name": "com.example.fernando.teste_sqlite1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296263667980-6b4vsn8m2udsbuu12773snm9u6vfl158.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fernando.teste_sqlite1",
+            "certificate_hash": "7d7ee434fe67dff4dc78b4d6fb937c96a4c50ebb"
+          }
+        },
+        {
+          "client_id": "296263667980-tii8t3jqd35i29uldfgvfv9bpa4ek216.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI_bkLuaLHRrsBx8IUVxPnjt0h5_7l1bI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296263667980:android:cfe38c5aaf032a0e",
+        "android_client_info": {
+          "package_name": "com.example.marcelo.forfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296263667980-i8akekbqj9riu3ie8bp50qrshhi4iid6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.marcelo.forfood",
+            "certificate_hash": "7d7ee434fe67dff4dc78b4d6fb937c96a4c50ebb"
+          }
+        },
+        {
+          "client_id": "296263667980-tii8t3jqd35i29uldfgvfv9bpa4ek216.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI_bkLuaLHRrsBx8IUVxPnjt0h5_7l1bI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
