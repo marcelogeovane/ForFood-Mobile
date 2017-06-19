@@ -3,17 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_opcao1"
+            android:id="@+id/nav_cardapio"
             android:icon="@drawable/ic_menu_send"
-            android:title="@string/action_opcao1" />
+            android:title="Cadápio" />
         <item
-            android:id="@+id/nav_opcao2"
+            android:id="@+id/nav_pedidos"
             android:icon="@drawable/ic_menu_send"
-            android:title="@string/action_opcao2" />
+            android:title="Pedidos" />
         <item
             android:id="@+id/nav_opcao3"
             android:icon="@drawable/ic_menu_send"
-            android:title="@string/action_opcao3" />
+            android:title="Não Sei!" />
     </group>
 
     <item android:title="...">

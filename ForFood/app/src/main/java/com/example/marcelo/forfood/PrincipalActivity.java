@@ -1,5 +1,6 @@
 package com.example.marcelo.forfood;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -92,12 +93,12 @@ public class PrincipalActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_opcao1:
+            case R.id.nav_cardapio:
                 Opcao1Fragment op1= new Opcao1Fragment();
                 replaceFragment(op1);
                 //Toast.makeText(getApplicationContext(), "Teste1!", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.nav_opcao2:
+            case R.id.nav_pedidos:
                 Opcao2Fragment op2= new Opcao2Fragment();
                 replaceFragment(op2);
                 //Toast.makeText(getApplicationContext(), "Teste2!", Toast.LENGTH_LONG).show();
@@ -108,7 +109,10 @@ public class PrincipalActivity extends AppCompatActivity
                 //Toast.makeText(getApplicationContext(), "Teste3!", Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_sair:
-                Toast.makeText(getApplicationContext(), "Teste6!", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(this, LoginActivity.class);
+                i.putExtra("sair","saindo");
+                startActivity(i);
+
                 break;
 
         }

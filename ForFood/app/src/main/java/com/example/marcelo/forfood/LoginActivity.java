@@ -3,11 +3,13 @@ package com.example.marcelo.forfood;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
@@ -51,6 +53,9 @@ public class LoginActivity extends AppCompatActivity implements
     //posta o status da autenticação
     private TextView tvStatus;
     private ProgressDialog mProgressDialog;
+    private Intent intent ;
+    private String mensagem;
+    private String mensagem1;
 
 
     @Override
@@ -82,15 +87,26 @@ public class LoginActivity extends AppCompatActivity implements
         //setando os listeners dos botões nesta activity
         findViewById(R.id.btnSiginIn).setOnClickListener(this);
         findViewById(R.id.btnSair).setOnClickListener(this);
-        findViewById(R.id.btnRevogar).setOnClickListener(this);
 
-        tvStatus = (TextView) findViewById(R.id.tvStatus);
+
+        //tvStatus = (TextView) findViewById(R.id.tvStatus);
 
         // Solicita as permissões
         String[] permissoes = new String[]{
                 Manifest.permission.INTERNET,
         };
         PermissionUtils.validate(this, 0, permissoes);
+
+        intent = getIntent();
+        mensagem = "sair";
+        mensagem1 = "saindo";
+        if (intent.getStringExtra("sair") != null){
+            Log.d("[IFMG]", "ENTROU NO IF O ONCREATE");
+            mensagem = intent.getStringExtra("sair");
+        }
+
+
+
     }
 
     //método onStard é executado assim aque a activity é iniciada a execução
@@ -148,19 +164,37 @@ public class LoginActivity extends AppCompatActivity implements
 
     // [START handleSignInResult]
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("[IFMG]", "Resultado se entrou:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            //signed_in_fmt
-            tvStatus.setText("Logado: " + acct.getEmail());
-            updateUI(true);
-            Intent i = new Intent(this, PrincipalActivity.class);
-            startActivity(i);
-        } else {
-            // Signed out, show unauthenticated UI.
-            updateUI(false);
-        }
+
+            Log.d("[IFMG]", "MENSAGEM:" + mensagem);
+            Log.d("[IFMG]", "Resultado se entrou:" + result.isSuccess());
+            if (result.isSuccess()) {
+                // Signed in successfully, show authenticated UI.
+                GoogleSignInAccount acct = result.getSignInAccount();
+                //signed_in_fmt
+                //tvStatus.setText("Logado: " + acct.getEmail());
+                try {
+                    if (!mensagem.equalsIgnoreCase(mensagem1)) {
+                    Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:");
+                    updateUI(true);
+                    Intent i = new Intent(this, PrincipalActivity.class);
+                    startActivity(i);
+                }else {
+                        mensagem = "";
+                    }
+
+
+                }catch (Exception e){
+                    Log.d("[IFMG]", "ERRO TRY/CATCH:" + e);
+
+                }
+
+
+
+
+            } else {
+                // Signed out, show unauthenticated UI.
+                updateUI(false);
+            }
     }
     // [END handleSignInResult]
 
@@ -186,7 +220,7 @@ public class LoginActivity extends AppCompatActivity implements
     // [END signOut]
 
     // [START revokeAccess]
-    /*private void revokeAccess() {
+    private void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -196,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements
                         // [END_EXCLUDE]
                     }
                 });
-    }*/
+    }
     // [END revokeAccess]
 
     @Override
@@ -230,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements
             findViewById(R.id.btnSiginIn).setVisibility(View.GONE);
             findViewById(R.id.btnSair).setVisibility(View.VISIBLE);
         } else {
-            tvStatus.setText("Deslogado");
+            //tvStatus.setText("Deslogado");
 
             findViewById(R.id.btnSiginIn).setVisibility(View.VISIBLE);
             findViewById(R.id.btnSair).setVisibility(View.GONE);
@@ -244,10 +278,7 @@ public class LoginActivity extends AppCompatActivity implements
                 signIn();
                 break;
             case R.id.btnSair:
-                signOut();
-                break;
-            case R.id.btnRevogar:
-                //revokeAccess();
+                revokeAccess();
                 break;
         }
     }
