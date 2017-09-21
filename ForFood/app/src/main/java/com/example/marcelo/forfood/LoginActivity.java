@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.marcelo.forfood.beans.Cliente;
+import com.example.marcelo.forfood.servicos.DataBase;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,6 +28,8 @@ import com.google.android.gms.common.api.Status;
 /**
  * Created by marcelo on 05/06/17.
  */
+
+
 
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
@@ -56,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements
     private Intent intent ;
     private String mensagem;
     private String mensagem1;
+    private DataBase db;
 
 
     @Override
@@ -105,6 +110,7 @@ public class LoginActivity extends AppCompatActivity implements
             mensagem = intent.getStringExtra("sair");
         }
 
+        db = new DataBase(getApplicationContext());
 
 
     }
@@ -174,8 +180,13 @@ public class LoginActivity extends AppCompatActivity implements
                 //tvStatus.setText("Logado: " + acct.getEmail());
                 try {
                     if (!mensagem.equalsIgnoreCase(mensagem1)) {
-                    Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:");
+                    Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:"+" ID !!! "+ acct.getId()+" " + acct.getIdToken());
                     updateUI(true);
+                        Cliente c = new Cliente();
+                        c.setNome("teste");
+                        c.setCodigo(1);
+                        db.saveCliente(c);
+                        db.deleteCliente(c);
                     Intent i = new Intent(this, PrincipalActivity.class);
                     startActivity(i);
                 }else {

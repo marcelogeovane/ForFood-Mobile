@@ -1,4 +1,4 @@
-package com.example.fernando.teste_sqlite1.beans;
+package com.example.marcelo.forfood.beans;
 
 import java.io.Serializable;
 

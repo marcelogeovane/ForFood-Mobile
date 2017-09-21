@@ -1,6 +1,8 @@
-package com.example.fernando.teste_sqlite1.beans;
+package com.example.marcelo.forfood.beans;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by marcelo on 04/06/17.
@@ -12,6 +14,10 @@ public class Pedido implements Serializable {
     private long codigo ;
     private String Status;
     private long cliente_codigo;
+    private double valorTotal ;
+    private Date data;
+    private String endereço;
+
 
     public long getCodigo() {
         return codigo;
@@ -37,12 +43,26 @@ public class Pedido implements Serializable {
         this.cliente_codigo = cliente_codigo;
     }
 
+    public double getValorTotal() { return valorTotal; }
+
+    public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
+
+    public Date getData() { return data; }
+
+    public void setData(Date data) { this.data = data; }
+
+    public String getEndereço() { return endereço; }
+
+    public void setEndereço(String endereço) { this.endereço = endereço; }
+
     @Override
     public String toString() {
-        return "Pedido{" +
+        return "Pedido" +
                 "codigo=" + codigo +
                 ", Status='" + Status + '\'' +
                 ", cliente_codigo=" + cliente_codigo +
-                '}';
+                ", valorTotal=" + valorTotal +
+                ", data=" + data +
+                ", endereço='" + endereço + '\'';
     }
 }

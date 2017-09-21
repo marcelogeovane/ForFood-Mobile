@@ -15,9 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.marcelo.forfood.view.fragments.Opcao1Fragment;
-import com.example.marcelo.forfood.view.fragments.Opcao2Fragment;
-import com.example.marcelo.forfood.view.fragments.Opcao3Fragment;
+import com.example.marcelo.forfood.view.fragments.CardapioFragment;
+import com.example.marcelo.forfood.view.fragments.ListaPedidosFragment;
 import com.example.marcelo.forfood.view.fragments.WelcomeFragment;
 
 public class PrincipalActivity extends AppCompatActivity
@@ -94,19 +93,18 @@ public class PrincipalActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_cardapio:
-                Opcao1Fragment op1= new Opcao1Fragment();
+                CardapioFragment op1= new CardapioFragment();
                 replaceFragment(op1);
                 //Toast.makeText(getApplicationContext(), "Teste1!", Toast.LENGTH_LONG).show();
                 break;
             case R.id.nav_pedidos:
-                Opcao2Fragment op2= new Opcao2Fragment();
+                ListaPedidosFragment op2= new ListaPedidosFragment();
                 replaceFragment(op2);
                 //Toast.makeText(getApplicationContext(), "Teste2!", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.nav_opcao3:
-                Opcao3Fragment mdf = new Opcao3Fragment();
-                replaceFragment(mdf);
-                //Toast.makeText(getApplicationContext(), "Teste3!", Toast.LENGTH_LONG).show();
+            case R.id.nav_realizarPedido:
+                Intent intent = new Intent(this, TesteActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_sair:
                 Intent i = new Intent(this, LoginActivity.class);

@@ -11,9 +11,9 @@
             android:icon="@drawable/ic_menu_send"
             android:title="Pedidos" />
         <item
-            android:id="@+id/nav_opcao3"
+            android:id="@+id/nav_realizarPedido"
             android:icon="@drawable/ic_menu_send"
-            android:title="Não Sei!" />
+            android:title="Realizar Pedido!" />
     </group>
 
     <item android:title="...">

@@ -1,4 +1,4 @@
-package com.example.fernando.teste_sqlite1.servicos;
+package com.example.marcelo.forfood.servicos;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,10 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.fernando.teste_sqlite1.beans.Cliente;
-import com.example.fernando.teste_sqlite1.beans.Pedido;
-import com.example.fernando.teste_sqlite1.beans.Pedido_Prato;
-import com.example.fernando.teste_sqlite1.beans.Prato;
+
+import com.example.marcelo.forfood.beans.Cliente;
+import com.example.marcelo.forfood.beans.Pedido;
+import com.example.marcelo.forfood.beans.Pedido_Prato;
+import com.example.marcelo.forfood.beans.Prato;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DataBase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Criando a Tabela " + TABELA1 + "...");
         db.execSQL("create table if not exists " + TABELA1 + " (" +
-                "cliCodigo integer primary key autoincrement," +
+                "cliCodigo integer primary key," +
                 "cliCpf integer," +
                 "cliNome text," +
                 "cliTelefone integer," +
@@ -47,7 +48,7 @@ public class DataBase extends SQLiteOpenHelper {
         //////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA2 + "...");
         db.execSQL("create table if not exists " + TABELA2 + " (" +
-                "praCodigo integer primary key autoincrement," +
+                "praCodigo integer primary key," +
                 "praNome text, " +
                 "praPreco integer," +
                 "praDescricao text," +
@@ -57,7 +58,7 @@ public class DataBase extends SQLiteOpenHelper {
         /////////////////////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA3 + "...");
         db.execSQL("create table if not exists " + TABELA3 + " (" +
-                "pedCodigo integer primary key autoincrement," +
+                "pedCodigo integer primary key," +
                 "pedStatus text," +
                 "cliente_cliCodigo integer" +
                 ");");
@@ -88,26 +89,18 @@ public class DataBase extends SQLiteOpenHelper {
         try {
 
             ContentValues values = new ContentValues();
+            values.put("cliCodigo", c.getCodigo());
             values.put("cliNome", c.getNome());
             values.put("cliCpf", c.getCpf());
             values.put("cliTelefone", c.getTelefone());
             values.put("cliEndereco", c.getEndereco());
             values.put("cliEmail", c.getEmail());
             values.put("cliSenha", c.getSenha());
-            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
-
-                String _id = String.valueOf(c.getCodigo());
-                String[] whereArgs = new String[]{_id};
-
-                // update contato set values = ... where _id=?
-                int count = db.update(TABELA1, values, "cliCodigo=?", whereArgs);
-
-                return count;
-            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
+            // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
                 // insert into contato values (...)
                 id = db.insert(TABELA1, "", values);
                 return id;
-            }
+
         } finally {
             db.close();
         }
@@ -128,20 +121,20 @@ public class DataBase extends SQLiteOpenHelper {
 
 
     // Consulta a lista com todos os contatos
-    public List<Cliente> findAll() {
+    public List<Cliente> findAllCliente() {
         SQLiteDatabase db = getReadableDatabase();
         try {
             // select * from cliente
             Cursor c = db.query(TABELA1, null, null, null, null, null, null, null);
 
-            return toList(c);
+            return toListCliente(c);
         } finally {
             db.close();
         }
     }
 
     // Consulta por sql testar depois
-    public List<Cliente> findBySql(String sql) {
+    public List<Cliente> findBySqlCliente(String sql) {
         SQLiteDatabase db = getReadableDatabase();
         try {
             Cursor c = db.rawQuery(sql, null);
@@ -169,7 +162,7 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     // Lê o cursor e cria a lista de coatatos
-    private List<Cliente> toList(Cursor c) {
+    private List<Cliente> toListCliente(Cursor c) {
         List<Cliente> clientes = new ArrayList<Cliente>();
 
         if (c.moveToFirst()) {
@@ -199,25 +192,17 @@ public class DataBase extends SQLiteOpenHelper {
         try {
 
             ContentValues values = new ContentValues();
+            values.put("praCodigo", p.getCodigo());
             values.put("praNome", p.getNome());
             values.put("praDescricao", p.getDescricao());
             values.put("praPreco", p.getPreco());
             values.put("praTempo", p.getTempo());
 
-            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
-
-                String _id = String.valueOf(p.getCodigo());
-                String[] whereArgs = new String[]{_id};
-
-                // update contato set values = ... where _id=?
-                int count = db.update(TABELA2, values, "cliCodigo=?", whereArgs);
-
-                return count;
-            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
+            // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
                 // insert into contato values (...)
                 id = db.insert(TABELA2, "", values);
                 return id;
-            }
+
         } finally {
             db.close();
         }
@@ -238,33 +223,36 @@ public class DataBase extends SQLiteOpenHelper {
 
 
     // Consulta a lista com todos os contatos
-    public List<Prato> Prato_findAll() {
+    public List<Prato> prato_findAll() {
         SQLiteDatabase db = getReadableDatabase();
         try {
             // select * from cliente
             Cursor c = db.query(TABELA2, null, null, null, null, null, null, null);
 
-            return Prato_toList(c);
+            return prato_toList(c);
         } finally {
             db.close();
         }
     }
 
     // Consulta por sql testar depois
-    public List<Cliente> Prato_findBySql(String sql) {
+    public List<Prato> prato_findBySql(String sql) {
         SQLiteDatabase db = getReadableDatabase();
         try {
             Cursor c = db.rawQuery(sql, null);
-            List<Cliente> clientes = new ArrayList<Cliente>();
+            List<Prato> clientes = new ArrayList<Prato>();
 
             if (c.moveToFirst()) {
                 do {
-                    Cliente cliente = new Cliente();
-                    clientes.add(cliente);
+                    Prato prato = new Prato();
+                    clientes.add(prato);
 
                     // recupera os atributos de contatos
-                    cliente.setCodigo(c.getLong(c.getColumnIndex("conCodigo")));
-                    cliente.setNome(c.getString(c.getColumnIndex("conNome")));
+                    prato.setCodigo(c.getLong(c.getColumnIndex("praCodigo")));
+                    prato.setNome(c.getString(c.getColumnIndex("praNome")));
+                    prato.setDescricao(c.getString(c.getColumnIndex("praDescricao")));
+                    prato.setPreco(c.getDouble(c.getColumnIndex("praPreco")));
+                    prato.setTempo(c.getLong(c.getColumnIndex("praTempo")));
                 } while (c.moveToNext());
             }
             return clientes;
@@ -274,7 +262,7 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     // Lê o cursor e cria a lista de coatatos
-    private List<Prato> Prato_toList(Cursor c) {
+    private List<Prato> prato_toList(Cursor c) {
         List<Prato> pratos = new ArrayList<Prato>();
 
         if (c.moveToFirst()) {
@@ -303,23 +291,13 @@ public class DataBase extends SQLiteOpenHelper {
         try {
 
             ContentValues values = new ContentValues();
+            values.put("pedCodigo", p.getCodigo());
             values.put("pedStatus", p.getStatus());
             values.put("cliente_cliCodigo", p.getCliente_codigo());
 
-            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
-
-                String _id = String.valueOf(p.getCodigo());
-                String[] whereArgs = new String[]{_id};
-
-                // update contato set values = ... where _id=?
-                int count = db.update(TABELA3, values, "pedCodigo=?", whereArgs);
-
-                return count;
-            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
                 // insert into contato values (...)
                 id = db.insert(TABELA3, "", values);
                 return id;
-            }
         } finally {
             db.close();
         }

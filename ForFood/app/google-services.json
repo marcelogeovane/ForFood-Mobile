@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "571002395028",
+    "project_id": "novo-ab08b"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571002395028:android:cfe38c5aaf032a0e",
+        "android_client_info": {
+          "package_name": "com.example.marcelo.forfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571002395028-k7c2hshjk5ameur6cge7scrqgnskedpa.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "571002395028-u4a3lgl482np0a7kev6auvd306f28nku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.marcelo.forfood",
+            "certificate_hash": "d3d228503703008c38311836c1e0e9072fde7a98"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt9XUeUB9UfYunvroot33rHyDG1ds9EyY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
