@@ -219,6 +219,8 @@ public class PedidoFragment extends Fragment {
                         p.setCodigo(Long.parseLong(linha.getString("pedCodigo")));
                         p.setStatus(linha.getString("pedStatus"));
                         p.setCliente_codigo(Long.parseLong(linha.getString("Cliente_cliCodigo")));
+                        p.setEndereço(linha.getString("pedEndereco"));
+                        p.setValorTotal(Double.parseDouble(linha.getString("pedValor")));
                         Log.d("[IFMG]", "resultado: " + p.toString());
                         db.savePedido(p);
                     }
@@ -247,4 +249,3 @@ public class PedidoFragment extends Fragment {
 
 
 
-}

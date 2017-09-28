@@ -57,7 +57,7 @@ public class Pedido implements Serializable {
 
     @Override
     public String toString() {
-        return "Pedido" +
+        return "Pedido - " +
                 "codigo=" + codigo +
                 ", Status='" + Status + '\'' +
                 ", cliente_codigo=" + cliente_codigo +

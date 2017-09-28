@@ -1,6 +1,7 @@
 package com.example.marcelo.forfood.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,11 @@ public class AdapterListViewPedido extends BaseAdapter {
         Pedido itemLista = lista.get(position);
         View view = LayoutInflater.from(context).inflate(R.layout.adapter_listview_item, parent, false);
         TextView t = (TextView) view.findViewById(R.id.tvNomePrato);
-        t.setText(itemLista.toString());
+        TextView t1 = (TextView) view.findViewById(R.id.tvDescricaoPrato);
+        TextView t2 = (TextView) view.findViewById(R.id.tvNomeEstabelecimento);
+        t.setText(String.valueOf(itemLista.getCodigo()));
+        t2.setText("R$:"+String.valueOf(itemLista.getValorTotal()));
+        t1.setText(itemLista.getEndereço());
         return view;
     }
 }

@@ -2,8 +2,10 @@ package com.example.marcelo.forfood;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +13,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.marcelo.forfood.beans.Cliente;
+import com.example.marcelo.forfood.beans.Pedido;
 import com.example.marcelo.forfood.servicos.DataBase;
+import com.example.marcelo.forfood.sinc.JSONParser;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -24,6 +29,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by marcelo on 05/06/17.
@@ -61,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements
     private String mensagem;
     private String mensagem1;
     private DataBase db;
-
+    private MediaPlayer mp  = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +123,7 @@ public class LoginActivity extends AppCompatActivity implements
         db = new DataBase(getApplicationContext());
 
 
+        mp = MediaPlayer.create(this,R.raw.bemvindo);
     }
 
     //método onStard é executado assim aque a activity é iniciada a execução
@@ -182,12 +193,8 @@ public class LoginActivity extends AppCompatActivity implements
                     if (!mensagem.equalsIgnoreCase(mensagem1)) {
                     Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:"+" ID !!! "+ acct.getId()+" " + acct.getIdToken());
                     updateUI(true);
-                        Cliente c = new Cliente();
-                        c.setNome("teste");
-                        c.setCodigo(1);
-                        db.saveCliente(c);
-                        db.deleteCliente(c);
                     Intent i = new Intent(this, PrincipalActivity.class);
+                        mp.start();
                     startActivity(i);
                 }else {
                         mensagem = "";
@@ -301,6 +308,113 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("[IFMG]", "Conexão falhou:" + connectionResult);
     }
 
-    {
+    public void requisitaPost(final String parametroJSON, final String URL_) {
+
+
+        //thread obrigatória para realização da requisição pode ser usado com outras formas de thread
+        new Thread(new Runnable() {
+            public void run() {
+                JSONParser jsonParser = new JSONParser();
+                JSONObject json = null;
+                try {
+                    //prepara parâmetros para serem enviados via método POST
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("dados", parametroJSON);
+
+                    Log.d("[IFMG]", parametroJSON);
+                    Log.d("[IFMG]", "JSON Envio Iniciando...");
+
+                    //faz a requisição POST e retorna o que o webservice REST envoiu dentro de json
+                    json = jsonParser.makeHttpRequest(URL_, "POST", params);
+
+                    Log.d("[IFMG]", " JSON Envio Terminado...");
+
+                    //Mostra no log e retorna o que o json retornou, caso não retornou nulo
+                    if (json != null) {
+                        Log.d("[IFMG]", json.toString());
+                        //return json;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("[IFMG]", "finalizando baixar defeitos");
+
+                //----------------------------------------------
+                //PÓS DOWNLOAD
+                //----------------------------------------------
+
+                //teste para ferificar se o json chegou corretamente e foi interpretado
+                if (json != null) {
+                    //------------------------------------------------------------
+                    //AQUI SE PEGA O JSON RETORNADO E TRATA O QUE DEVE SER TRATADO
+                    //------------------------------------------------------------
+                    final String resp = interpretaJSON_Aritimetica(json);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+
+                        }
+                    });
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Falha na conexão!!!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+
+            }
+        }).start();
     }
+
+    /**
+     * Método criado para receber, interpretar o obj json e retornar uma string formatada do mesmo
+     *
+     * @param json
+     * @return string formatada
+     */
+    public String interpretaJSON_Aritimetica(JSONObject json) {
+        String texto = "";
+        try {
+            JSONArray linhas = null;
+            //Printando na string os elementos identificados nela
+            try {
+                linhas = (JSONArray) json.get("pedido");//pega vetor do json recebido
+                if (linhas.length() > 0) {//verifica we exite algum registro recebido do servidor
+                    for (int i = 0; i < linhas.length(); i++) {
+                        JSONObject linha = (JSONObject) linhas.get(i);
+                        Pedido p = new Pedido();
+                        p.setCodigo(Long.parseLong(linha.getString("pedCodigo")));
+                        p.setStatus(linha.getString("pedStatus"));
+                        p.setCliente_codigo(Long.parseLong(linha.getString("Cliente_cliCodigo")));
+                        p.setEndereço(linha.getString("pedEndereco"));
+                        p.setValorTotal(Double.parseDouble(linha.getString("pedValor")));
+                        Log.d("[IFMG]", "resultado: " + p.toString());
+                        db.savePedido(p);
+                    }
+                }
+            } catch (Exception c) {
+                c.printStackTrace();
+                Log.d("[IFMG]", "Erro: " + c.getMessage());
+            }
+        } catch (Exception e) {//JSONException e) {
+            e.printStackTrace();
+        }
+        return texto;
+    }
+
+    public static ProgressDialog gerarDialogIndeterminado(String mensagem, Context activityContexto) {
+        ProgressDialog pDialog = new ProgressDialog(activityContexto);
+        pDialog.setMessage(mensagem);
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(true);
+        //pDialog.show();
+        return pDialog;
+    }
+
 }

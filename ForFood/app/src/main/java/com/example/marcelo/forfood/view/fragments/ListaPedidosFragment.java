@@ -84,6 +84,7 @@ public class ListaPedidosFragment extends Fragment {
     public void onResume() {
         super.onResume();
         lista = db.pedido_findAll();
+        Log.d("[IFMG]","ON RESUME "+ db.pedido_findAll());
         if(lista.isEmpty()) {
             Log.d("[IFMG]", "ENTROU NO IF DO VIEW CREATE!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             requisitaPost(
@@ -219,7 +220,9 @@ public class ListaPedidosFragment extends Fragment {
                         p.setCodigo(Long.parseLong(linha.getString("pedCodigo")));
                         p.setStatus(linha.getString("pedStatus"));
                         p.setCliente_codigo(Long.parseLong(linha.getString("Cliente_cliCodigo")));
-                        Log.d("[IFMG]", "resultado: " + p.toString());
+                        p.setEndereço(linha.getString("pedEndereco"));
+                        p.setValorTotal(Double.parseDouble(linha.getString("pedValor")));
+                        Log.d("[IFMG]", "resultadoFRAGMENT: " + p.toString());
                         db.savePedido(p);
                     }
                 }

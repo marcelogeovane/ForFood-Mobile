@@ -60,6 +60,9 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL("create table if not exists " + TABELA3 + " (" +
                 "pedCodigo integer primary key," +
                 "pedStatus text," +
+                "pedValor double," +
+                "pedData text,"+
+                "pedEndereco text,"+
                 "cliente_cliCodigo integer" +
                 ");");
         Log.d(TAG, "Tabela " + TABELA3 + " criada com sucesso.");
@@ -293,7 +296,16 @@ public class DataBase extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("pedCodigo", p.getCodigo());
             values.put("pedStatus", p.getStatus());
+            values.put("pedValor", p.getValorTotal());
+            values.put("pedEndereco", p.getEndereço());
             values.put("cliente_cliCodigo", p.getCliente_codigo());
+            Log.d("[IFMG]","DATA BASE PEDIDO"+ p.toString());
+
+            /*
+            "pedValor double," +
+                "pedData text,"+
+                "pedEndereco text,"+
+             */
 
                 // insert into contato values (...)
                 id = db.insert(TABELA3, "", values);
@@ -367,6 +379,8 @@ public class DataBase extends SQLiteOpenHelper {
                 pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
                 pedido.setStatus(c.getString(c.getColumnIndex("pedStatus")));
                 pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+                pedido.setValorTotal(c.getDouble(c.getColumnIndex("pedValor")));
+                pedido.setEndereço(c.getString(c.getColumnIndex("pedEndereco")));
 
             } while (c.moveToNext());
         }

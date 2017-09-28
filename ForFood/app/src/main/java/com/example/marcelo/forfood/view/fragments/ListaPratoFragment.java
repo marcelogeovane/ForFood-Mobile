@@ -62,7 +62,7 @@ public class ListaPratoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //extraio o objeto view para trabalhar com demais componentes no fragment
-        View view = inflater.inflate(R.layout.fragment_listaDePratos, container, false);
+        View view = inflater.inflate(R.layout.fragment_lista_de_pratos, container, false);
 
         // identifica ListView
         listView = (ListView) view.findViewById(R.id.listViewPratos2);

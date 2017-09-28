@@ -23,24 +23,23 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Hora do Rango"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:elegantTextHeight="true"
+        android:freezesText="true"
         android:gravity="center_vertical"
         android:linksClickable="false"
         android:longClickable="false"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:singleLine="true"
-        android:typeface="monospace"
-        android:visibility="visible"
+        android:text="ForFood"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textIsSelectable="false"
-        android:freezesText="true"
-        />
+        android:typeface="monospace"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pedidos de almoço e fast-food" />
+        android:text="Seu lanche a um clique" />
 
 </LinearLayout>

@@ -13,7 +13,7 @@
         <item
             android:id="@+id/nav_realizarPedido"
             android:icon="@drawable/ic_menu_send"
-            android:title="Realizar Pedido!" />
+            android:title="Realizar Pedido" />
     </group>
 
     <item android:title="...">

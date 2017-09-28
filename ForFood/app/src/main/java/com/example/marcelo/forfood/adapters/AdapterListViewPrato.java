@@ -49,7 +49,11 @@ public class AdapterListViewPrato extends BaseAdapter {
         Prato itemLista = lista.get(position);
         View view = LayoutInflater.from(context).inflate(R.layout.adapter_listview_item, parent, false);
         TextView t = (TextView) view.findViewById(R.id.tvNomePrato);
+        TextView t1 = (TextView) view.findViewById(R.id.tvDescricaoPrato);
+        TextView t2 = (TextView) view.findViewById(R.id.tvNomeEstabelecimento);
         t.setText(itemLista.getNome());
+        t1.setText(itemLista.getDescricao());
+        t2.setText("Preço: "+String.valueOf(itemLista.getPreco()));
         return view;
     }
 }
