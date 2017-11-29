@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.marcelo.forfood.beans.Cliente;
 import com.example.marcelo.forfood.beans.Pedido;
 import com.example.marcelo.forfood.servicos.DataBase;
+import com.example.marcelo.forfood.sinc.JSONDados;
 import com.example.marcelo.forfood.sinc.JSONParser;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -72,6 +73,8 @@ public class LoginActivity extends AppCompatActivity implements
     private String mensagem1;
     private DataBase db;
     private MediaPlayer mp  = null;
+    private boolean loga;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +127,8 @@ public class LoginActivity extends AppCompatActivity implements
 
 
         mp = MediaPlayer.create(this,R.raw.bemvindo);
+
+        loga = false;
     }
 
     //método onStard é executado assim aque a activity é iniciada a execução
@@ -173,6 +178,8 @@ public class LoginActivity extends AppCompatActivity implements
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+
+            dialog = ProgressDialog.show(this, "Login", "Validando seus dados... Aguarde.", false, true);
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
@@ -191,13 +198,19 @@ public class LoginActivity extends AppCompatActivity implements
                 //tvStatus.setText("Logado: " + acct.getEmail());
                 try {
                     if (!mensagem.equalsIgnoreCase(mensagem1)) {
-                    Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:"+" ID !!! "+ acct.getId()+" " + acct.getIdToken());
-                    updateUI(true);
-                    Intent i = new Intent(this, PrincipalActivity.class);
-                        mp.start();
-                    startActivity(i);
-                }else {
-                        mensagem = "";
+                        Log.d("[IFMG]", "ENTROU NO IF DO HANDLE:");
+                        updateUI(true);
+
+
+
+                        requisitaPost(JSONDados.geraJsonLogin(
+                                acct.getId(),
+                                acct.getDisplayName(),
+                                acct.getEmail()),
+                                "https://forfood.000webhostapp.com/json2.php");
+
+                    }else {
+                            mensagem = "";
                     }
 
 
@@ -296,6 +309,7 @@ public class LoginActivity extends AppCompatActivity implements
                 signIn();
                 break;
             case R.id.btnSair:
+                loga = false;
                 revokeAccess();
                 break;
         }
@@ -314,7 +328,7 @@ public class LoginActivity extends AppCompatActivity implements
         //thread obrigatória para realização da requisição pode ser usado com outras formas de thread
         new Thread(new Runnable() {
             public void run() {
-                JSONParser jsonParser = new JSONParser();
+                final JSONParser jsonParser = new JSONParser();
                 JSONObject json = null;
                 try {
                     //prepara parâmetros para serem enviados via método POST
@@ -349,12 +363,24 @@ public class LoginActivity extends AppCompatActivity implements
                     //------------------------------------------------------------
                     //AQUI SE PEGA O JSON RETORNADO E TRATA O QUE DEVE SER TRATADO
                     //------------------------------------------------------------
-                    final String resp = interpretaJSON_Aritimetica(json);
+                  //  final String resp = interpretaJSON_Campos(json);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
-
+                            final String resp =  jsonParser.result();
+                            Log.d("[IFMG]", "VARIAVEL RESP:" + resp+":");
+                            if (resp.equalsIgnoreCase("{\"true\":\"true\"}  ")) {
+                                Log.d("[IFMG]", "VARIAVEL LOGA É TRUE!!!!!!!!!!!!!!");
+                                dialog.dismiss();
+                                Intent i = new Intent(getApplicationContext(), PrincipalActivity.class);
+                                mp.start();
+                                startActivity(i);
+                            }else if(resp.equalsIgnoreCase("{\"false\":\"false\"}  ")){
+                                dialog.dismiss();
+                                Log.d("[IFMG]", "VARIAVEL LOGA È FALSE !!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                Toast.makeText(getApplicationContext(), "Você não esta registrado no ForFood", Toast.LENGTH_LONG).show();
+                            }
+                            Log.d("[IFMG]", "VARIAVEL LOGA É TRUE SAIU DO IF");
                         }
                     });
 
@@ -369,52 +395,18 @@ public class LoginActivity extends AppCompatActivity implements
                 }
 
             }
+
         }).start();
     }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Método criado para receber, interpretar o obj json e retornar uma string formatada do mesmo
-     *
-     * @param json
-     * @return string formatada
-     */
-    public String interpretaJSON_Aritimetica(JSONObject json) {
-        String texto = "";
-        try {
-            JSONArray linhas = null;
-            //Printando na string os elementos identificados nela
-            try {
-                linhas = (JSONArray) json.get("pedido");//pega vetor do json recebido
-                if (linhas.length() > 0) {//verifica we exite algum registro recebido do servidor
-                    for (int i = 0; i < linhas.length(); i++) {
-                        JSONObject linha = (JSONObject) linhas.get(i);
-                        Pedido p = new Pedido();
-                        p.setCodigo(Long.parseLong(linha.getString("pedCodigo")));
-                        p.setStatus(linha.getString("pedStatus"));
-                        p.setCliente_codigo(Long.parseLong(linha.getString("Cliente_cliCodigo")));
-                        p.setEndereço(linha.getString("pedEndereco"));
-                        p.setValorTotal(Double.parseDouble(linha.getString("pedValor")));
-                        Log.d("[IFMG]", "resultado: " + p.toString());
-                        db.savePedido(p);
-                    }
-                }
-            } catch (Exception c) {
-                c.printStackTrace();
-                Log.d("[IFMG]", "Erro: " + c.getMessage());
-            }
-        } catch (Exception e) {//JSONException e) {
-            e.printStackTrace();
-        }
-        return texto;
-    }
 
-    public static ProgressDialog gerarDialogIndeterminado(String mensagem, Context activityContexto) {
-        ProgressDialog pDialog = new ProgressDialog(activityContexto);
-        pDialog.setMessage(mensagem);
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(true);
-        //pDialog.show();
-        return pDialog;
-    }
+    ///////////////////////////////////////////////////////////////////////////////
+
 
 }
+
+
+
+
+

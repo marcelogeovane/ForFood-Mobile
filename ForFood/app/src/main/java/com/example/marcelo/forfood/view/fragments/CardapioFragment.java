@@ -90,7 +90,7 @@ public class CardapioFragment extends Fragment {
             requisitaPost(
                     JSONDados.geraJsonTeste(
                             n1),
-                    "https://jsonforfood1.000webhostapp.com/json1.php"
+                    "https://forfood.000webhostapp.com/json1.php"
             );
         }
 

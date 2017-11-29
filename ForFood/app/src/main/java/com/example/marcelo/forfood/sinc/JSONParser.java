@@ -112,6 +112,12 @@ public class JSONParser {
         return jObj;
     }
 
+    public String result(){
+        return result.toString();
+    }
+
+
+
     public String replaceAcutesHTML(String str) {
 
         str = str.replaceAll("&aacute;", "á");

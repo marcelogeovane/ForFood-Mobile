@@ -225,6 +225,8 @@ public class ListaPedidosFragment extends Fragment {
                         Log.d("[IFMG]", "resultadoFRAGMENT: " + p.toString());
                         db.savePedido(p);
                     }
+                }else {
+                    Log.d("[IFMG]", "JSON VAZIO!!!!!!!!!!!!! ");
                 }
             } catch (Exception c) {
                 c.printStackTrace();

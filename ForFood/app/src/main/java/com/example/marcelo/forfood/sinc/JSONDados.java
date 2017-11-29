@@ -121,4 +121,58 @@ public class JSONDados {
     }
 
 
+
+    public static String geraJsonLogin(String codigo, String name, String email) {
+        ArrayList<JSONObject> dadosLogin = new ArrayList<JSONObject>();
+        JSONObject registro = new JSONObject();
+        //cria um registro primeiro
+        try {
+            registro.put("codigo", codigo);
+            registro.put("name", name);
+            registro.put("email", email);
+        } catch (JSONException k) {
+            Log.d("IFMG", "" + k.getMessage());
+        }
+        dadosLogin.add(registro);        //adiciona registro à lista de registros
+        //----------------------------------------------------------------------------------------
+        //Adicionando os últimos dtcs encontrados e introduzidos no JSON de envio:
+        /*ArrayList<JSONObject> tabelaTesteDados = new ArrayList<JSONObject>();
+        JSONObject registroDadosTeste;
+        //cria um registro primeiro
+        for (String x : dadosTeste) {
+            registroDadosTeste = new JSONObject();
+            try {
+                // isere na coluna dadosTeste,
+                // poderia colocar mais campos no JSON para enviar uma tabela
+                registroDadosTeste.put("dadosTeste", x);
+            } catch (JSONException k) {
+                Log.d("IFMG", "" + k.getMessage());
+            }
+            //adiciona registro à lista de registros
+            tabelaTesteDados.add(registroDadosTeste);
+        }*/
+
+        //adiciona tabelas
+        JSONObject bd = new JSONObject();
+        try {
+            bd.putOpt("login", (Object) dadosLogin);
+            //bd.putOpt("lista_dados", (Object) tabelaTesteDados);
+
+        } catch (JSONException u) {
+            u.printStackTrace();
+        }
+
+        String f = bd.toString();
+        f = f.replace("\\", "");//gambiarra!!!
+        f = f.replace(":\"[", ":[");
+        f = f.replace("]\"}", "]}");
+        f = f.replace("]\"", "]");
+        f = f.replace(", {", ",{");
+        Log.i("JSON_ENVIADO: ", f);
+        return f;
+    }
+
+
+
+
 }

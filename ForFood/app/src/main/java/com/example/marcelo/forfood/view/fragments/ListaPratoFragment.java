@@ -90,7 +90,7 @@ public class ListaPratoFragment extends Fragment {
             requisitaPost(
                     JSONDados.geraJsonTeste(
                             n1),
-                    "https://jsonforfood1.000webhostapp.com/json1.php"
+                    "https://forfood.000webhostapp.com/json1.php"
             );
         }
 
@@ -184,7 +184,8 @@ public class ListaPratoFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
+                            //setando o adapter customizado ao list
+                            listView.setAdapter(salv);
 
                         }
                     });
