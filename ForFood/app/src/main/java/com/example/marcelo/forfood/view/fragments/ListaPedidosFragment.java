@@ -72,8 +72,7 @@ public class ListaPedidosFragment extends Fragment {
         });
 
         db = new DataBase(getContext());
-        n1 = "1";
-
+        lista = db.pedido_findAll();
 
         return view;
     }
@@ -83,17 +82,7 @@ public class ListaPedidosFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        lista = db.pedido_findAll();
-        Log.d("[IFMG]","ON RESUME "+ db.pedido_findAll());
-        if(lista.isEmpty()) {
-            Log.d("[IFMG]", "ENTROU NO IF DO VIEW CREATE!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            requisitaPost(
-                    JSONDados.geraJsonTeste(
-                            n1),
-                    "https://jsonforfood1.000webhostapp.com/json1.php"
-            );
-        }
-        criaLista();
+         criaLista();
     }
 
     private void criaLista() {
@@ -136,116 +125,6 @@ public class ListaPedidosFragment extends Fragment {
         alerta.show();
     }
 
-    public void requisitaPost(final String parametroJSON, final String URL_) {
-
-
-        //thread obrigatória para realização da requisição pode ser usado com outras formas de thread
-        new Thread(new Runnable() {
-            public void run() {
-                JSONParser jsonParser = new JSONParser();
-                JSONObject json = null;
-                try {
-                    //prepara parâmetros para serem enviados via método POST
-                    HashMap<String, String> params = new HashMap<>();
-                    params.put("dados", parametroJSON);
-
-                    Log.d("[IFMG]", parametroJSON);
-                    Log.d("[IFMG]", "JSON Envio Iniciando...");
-
-                    //faz a requisição POST e retorna o que o webservice REST envoiu dentro de json
-                    json = jsonParser.makeHttpRequest(URL_, "POST", params);
-
-                    Log.d("[IFMG]", " JSON Envio Terminado...");
-
-                    //Mostra no log e retorna o que o json retornou, caso não retornou nulo
-                    if (json != null) {
-                        Log.d("[IFMG]", json.toString());
-                        //return json;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                Log.d("[IFMG]", "finalizando baixar defeitos");
-
-                //----------------------------------------------
-                //PÓS DOWNLOAD
-                //----------------------------------------------
-
-                //teste para ferificar se o json chegou corretamente e foi interpretado
-                if (json != null) {
-                    //------------------------------------------------------------
-                    //AQUI SE PEGA O JSON RETORNADO E TRATA O QUE DEVE SER TRATADO
-                    //------------------------------------------------------------
-                    final String resp = interpretaJSON_Aritimetica(json);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-
-                        }
-                    });
-
-                } else {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "Falha na conexão!!!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-                }
-
-            }
-        }).start();
-    }
-
-    /**
-     * Método criado para receber, interpretar o obj json e retornar uma string formatada do mesmo
-     *
-     * @param json
-     * @return string formatada
-     */
-    public String interpretaJSON_Aritimetica(JSONObject json) {
-        String texto = "";
-        try {
-            JSONArray linhas = null;
-            //Printando na string os elementos identificados nela
-            try {
-                linhas = (JSONArray) json.get("pedido");//pega vetor do json recebido
-                if (linhas.length() > 0) {//verifica we exite algum registro recebido do servidor
-                    for (int i = 0; i < linhas.length(); i++) {
-                        JSONObject linha = (JSONObject) linhas.get(i);
-                        Pedido p = new Pedido();
-                        p.setCodigo(Long.parseLong(linha.getString("pedCodigo")));
-                        p.setStatus(linha.getString("pedStatus"));
-                        p.setCliente_codigo(Long.parseLong(linha.getString("Cliente_cliCodigo")));
-                        p.setEndereço(linha.getString("pedEndereco"));
-                        p.setValorTotal(Double.parseDouble(linha.getString("pedValor")));
-                        Log.d("[IFMG]", "resultadoFRAGMENT: " + p.toString());
-                        db.savePedido(p);
-                    }
-                }else {
-                    Log.d("[IFMG]", "JSON VAZIO!!!!!!!!!!!!! ");
-                }
-            } catch (Exception c) {
-                c.printStackTrace();
-                Log.d("[IFMG]", "Erro: " + c.getMessage());
-            }
-        } catch (Exception e) {//JSONException e) {
-            e.printStackTrace();
-        }
-        return texto;
-    }
-
-    public static ProgressDialog gerarDialogIndeterminado(String mensagem, Context activityContexto) {
-        ProgressDialog pDialog = new ProgressDialog(activityContexto);
-        pDialog.setMessage(mensagem);
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(true);
-        //pDialog.show();
-        return pDialog;
-    }
 
 }
 

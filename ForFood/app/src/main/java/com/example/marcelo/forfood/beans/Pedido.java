@@ -12,10 +12,9 @@ public class Pedido implements Serializable {
     private static final long serialVersionUID = 6601006766832473959L;
 
     private long codigo ;
-    private String Status;
-    private long cliente_codigo;
+    private double cliente_codigo;
     private double valorTotal ;
-    private Date data;
+    private String data;
     private String endereço;
 
 
@@ -27,19 +26,12 @@ public class Pedido implements Serializable {
         this.codigo = codigo;
     }
 
-    public String getStatus() {
-        return Status;
-    }
 
-    public void setStatus(String status) {
-        Status = status;
-    }
-
-    public long getCliente_codigo() {
+    public double getCliente_codigo() {
         return cliente_codigo;
     }
 
-    public void setCliente_codigo(long cliente_codigo) {
+    public void setCliente_codigo(double cliente_codigo) {
         this.cliente_codigo = cliente_codigo;
     }
 
@@ -47,9 +39,13 @@ public class Pedido implements Serializable {
 
     public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
 
-    public Date getData() { return data; }
+    public String getData() {
+        return data;
+    }
 
-    public void setData(Date data) { this.data = data; }
+    public void setData(String data) {
+        this.data = data;
+    }
 
     public String getEndereço() { return endereço; }
 
@@ -59,7 +55,6 @@ public class Pedido implements Serializable {
     public String toString() {
         return "Pedido - " +
                 "codigo=" + codigo +
-                ", Status='" + Status + '\'' +
                 ", cliente_codigo=" + cliente_codigo +
                 ", valorTotal=" + valorTotal +
                 ", data=" + data +

@@ -2,9 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.PedidoFragment"
-    android:orientation="vertical"
-    android:weightSum="1">
+    tools:context=".view.fragments.ListaPratoFragment"
+    android:orientation="vertical">
     <!-- inicio banner app -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,51 +20,30 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingTop="10dp"
-            android:text="Pedido"
+            android:text="Cardápio"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="25dp"
             android:textStyle="bold" />
 
-
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="53dp"
-        android:paddingTop="10dp"
-        android:text="Valor Total"
-        android:textAlignment="center"
-        android:textSize="25dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="53dp"
-        android:paddingTop="10dp"
-        android:text="00,00"
-        android:textAlignment="center"
-        android:textSize="25dp"
-        android:textStyle="bold" />
-
 
     <ListView
         android:id="@+id/listViewPratos2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="470dp"
         tools:listitem="@android:layout/simple_list_item_1" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
+        android:background="@color/colorPrimaryDark"
 
-        android:background="@color/colorPrimaryDark">
+        >
 
     </LinearLayout>
-
 
     <!-- fim banner app -->
 

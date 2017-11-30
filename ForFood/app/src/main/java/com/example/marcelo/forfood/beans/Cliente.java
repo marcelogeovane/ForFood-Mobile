@@ -10,11 +10,9 @@ public class Cliente implements Serializable {
     private static final long serialVersionUID = 6601006766832473959L;
 
     private boolean check;
-    private long codigo;
+    private double codigo;
     private String nome;
     private long telefone;
-    private String endereco;
-    private String senha;
     private String email;
     private long cpf;
 
@@ -24,6 +22,14 @@ public class Cliente implements Serializable {
 
     public void setCheck(boolean check) {
         this.check = check;
+    }
+
+    public double getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(double codigo) {
+        this.codigo = codigo;
     }
 
     public boolean getCheck() {
@@ -44,30 +50,6 @@ public class Cliente implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public long getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(long codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public String getEmail() {
@@ -93,8 +75,6 @@ public class Cliente implements Serializable {
                 ", codigo=" + codigo +
                 ", nome='" + nome + '\'' +
                 ", telefone=" + telefone +
-                ", endereco='" + endereco + '\'' +
-                ", senha='" + senha + '\'' +
                 ", email='" + email + '\'' +
                 ", cpf=" + cpf +
                 '}';

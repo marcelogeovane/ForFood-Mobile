@@ -143,9 +143,11 @@ public class LoginActivity extends AppCompatActivity implements
             // Se as credenciais em cache do usuário forem válidas, o OptionalPendingResult será
             // "concluído" eo GoogleSignInResult estará disponível instantaneamente.
             Log.d("[IFMG]", "Tem login no cache");
+            dialog = ProgressDialog.show(this, "Login", "Validando seus dados... Aguarde.", false, true);
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
+            dialog = ProgressDialog.show(this, "Login", "Validando seus dados... Aguarde.", false, true);
             // Se o usuário não tiver autenticado anteriormente neste dispositivo ou o login tiver expirado,
             // este trecho tentará fazer login no usuário silenciosamente.
             // A autenticação entre dispositivos ocorrerá neste trecho.
@@ -207,7 +209,10 @@ public class LoginActivity extends AppCompatActivity implements
                                 acct.getId(),
                                 acct.getDisplayName(),
                                 acct.getEmail()),
-                                "https://forfood.000webhostapp.com/json2.php");
+                                "https://forfood.000webhostapp.com/json2.php",
+                                acct.getId(),
+                                acct.getDisplayName(),
+                                acct.getEmail());
 
                     }else {
                             mensagem = "";
@@ -322,7 +327,7 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("[IFMG]", "Conexão falhou:" + connectionResult);
     }
 
-    public void requisitaPost(final String parametroJSON, final String URL_) {
+    public void requisitaPost(final String parametroJSON, final String URL_, final String codigo, final String nome, final String email) {
 
 
         //thread obrigatória para realização da requisição pode ser usado com outras formas de thread
@@ -372,6 +377,15 @@ public class LoginActivity extends AppCompatActivity implements
                             if (resp.equalsIgnoreCase("{\"true\":\"true\"}  ")) {
                                 Log.d("[IFMG]", "VARIAVEL LOGA É TRUE!!!!!!!!!!!!!!");
                                 dialog.dismiss();
+                                if (db.findAllCliente().isEmpty()){
+                                    Cliente c = new Cliente();
+                                    c.setCodigo(Double.parseDouble(codigo));
+                                    c.setNome(nome);
+                                    c.setEmail(email);
+                                    c.setCpf(999999);
+                                    c.setTelefone(999999);
+                                    db.saveCliente(c);
+                                }
                                 Intent i = new Intent(getApplicationContext(), PrincipalActivity.class);
                                 mp.start();
                                 startActivity(i);

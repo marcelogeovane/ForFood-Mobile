@@ -1,5 +1,6 @@
 package com.example.marcelo.forfood.sinc;
 
+import android.database.DefaultDatabaseErrorHandler;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -45,12 +46,12 @@ public class JSONDados {
         return f;
     }
 
-    public static String geraJsonTeste(String n1) {
+    public static String geraJsonTeste(String codigo) {
         ArrayList<JSONObject> tabela = new ArrayList<JSONObject>();
         JSONObject registro = new JSONObject();
         //cria um registro primeiro
         try {
-            registro.put("enviou", n1+"");
+            registro.put("codigo", codigo);
         } catch (JSONException k) {
             Log.d("IFMG", "" + k.getMessage());
         }
@@ -72,39 +73,25 @@ public class JSONDados {
         return f;
     }
 
-    public static String geraJsonTest2(int n1, int n2, ArrayList<String> dadosTeste) {
+    public static String geraJsonPedido(String data, double valor, double cliCodigo, String endereco, long codigo) {
         ArrayList<JSONObject> numeros = new ArrayList<JSONObject>();
         JSONObject registro = new JSONObject();
         //cria um registro primeiro
         try {
-            registro.put("n1", n1);
-            registro.put("n2", n2);
+            registro.put("codigo",codigo);
+            registro.put("cliCodigo", cliCodigo);
+            registro.put("data", data);
+            registro.put("endereco",endereco);
+            registro.put("valor",valor);
         } catch (JSONException k) {
             Log.d("IFMG", "" + k.getMessage());
         }
         numeros.add(registro);        //adiciona registro à lista de registros
-        //----------------------------------------------------------------------------------------
-        //Adicionando os últimos dtcs encontrados e introduzidos no JSON de envio:
-        ArrayList<JSONObject> tabelaTesteDados = new ArrayList<JSONObject>();
-        JSONObject registroDadosTeste;
-        //cria um registro primeiro
-        for (String x : dadosTeste) {
-            registroDadosTeste = new JSONObject();
-            try {
-                registroDadosTeste.put("dadosTeste", x);
-            } catch (JSONException k) {
-                Log.d("IFMG", "" + k.getMessage());
-            }
-            //adiciona registro à lista de registros
-            tabelaTesteDados.add(registroDadosTeste);
-        }
 
         //adiciona tabelas
         JSONObject bd = new JSONObject();
         try {
-            bd.putOpt("numeros", (Object) numeros);
-            bd.putOpt("testeDados", (Object) tabelaTesteDados);
-
+            bd.putOpt("pedido", (Object) numeros);
         } catch (JSONException u) {
             u.printStackTrace();
         }

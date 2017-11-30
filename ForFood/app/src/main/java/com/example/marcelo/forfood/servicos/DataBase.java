@@ -9,6 +9,7 @@ import android.util.Log;
 
 
 import com.example.marcelo.forfood.beans.Cliente;
+import com.example.marcelo.forfood.beans.ListaPedido;
 import com.example.marcelo.forfood.beans.Pedido;
 import com.example.marcelo.forfood.beans.Pedido_Prato;
 import com.example.marcelo.forfood.beans.Prato;
@@ -25,6 +26,8 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String TABELA2 = "prato";
     private static final String TABELA3 = "pedido";
     private static final String TABELA4 = "pedido_prato";
+    private static final String TABELA5 = "lista_pedido";
+    private static final String TABELA6 = "pedido_tempo";
     private static final int VERSAO_BANCO = 1;
 
     public DataBase(Context context) {
@@ -36,13 +39,11 @@ public class DataBase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Criando a Tabela " + TABELA1 + "...");
         db.execSQL("create table if not exists " + TABELA1 + " (" +
-                "cliCodigo integer primary key," +
+                "cliCodigo double primary key," +
                 "cliCpf integer," +
                 "cliNome text," +
                 "cliTelefone integer," +
-                "cliEndereco text," +
-                "cliEmail text," +
-                "cliSenha text" +
+                "cliEmail text" +
                 ");");
         Log.d(TAG, "Tabela " + TABELA1 + " criada com sucesso.");
         //////////////////////////////////////////////////////////////
@@ -58,8 +59,7 @@ public class DataBase extends SQLiteOpenHelper {
         /////////////////////////////////////////////////////////////////////////////
         Log.d(TAG, "Criando a Tabela " + TABELA3 + "...");
         db.execSQL("create table if not exists " + TABELA3 + " (" +
-                "pedCodigo integer primary key," +
-                "pedStatus text," +
+                "pedCodigo integer primary key autoincrement," +
                 "pedValor double," +
                 "pedData text,"+
                 "pedEndereco text,"+
@@ -73,6 +73,24 @@ public class DataBase extends SQLiteOpenHelper {
                 "prato_praCodigo integer" +
                 ");");
         Log.d(TAG, "Tabela " + TABELA4 + " criada com sucesso.");
+        ////////////////////////////////////////////////////////////////////////
+        Log.d(TAG, "Criando a Tabela " + TABELA5 + "...");
+        db.execSQL("create table if not exists " + TABELA5 + " (" +
+                "lisCodigo integer primary key autoincrement," +
+                "lisPraCodigo integer" +
+                ");");
+        Log.d(TAG, "Tabela " + TABELA5 + " criada com sucesso.");
+        /////////////////////////////////////////////////////////////////////////////
+        Log.d(TAG, "Criando a Tabela " + TABELA6 + "...");
+        db.execSQL("create table if not exists " + TABELA6 + " (" +
+                "pedCodigo integer primary key autoincrement," +
+                "pedValor double," +
+                "pedData text,"+
+                "pedEndereco text,"+
+                "cliente_cliCodigo integer" +
+                ");");
+        Log.d(TAG, "Tabela " + TABELA6 + " criada com sucesso.");
+        ////////////////////////////////////////////////////////////////////////
     }
 
     @Override
@@ -86,8 +104,8 @@ public class DataBase extends SQLiteOpenHelper {
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     // Insere um novo CONTATO, ou atualiza se já existe.
-    public long saveCliente(Cliente c) {
-        long id = c.getCodigo();
+    public double saveCliente(Cliente c) {
+        double id = c.getCodigo();
         SQLiteDatabase db = getWritableDatabase();
         try {
 
@@ -96,9 +114,7 @@ public class DataBase extends SQLiteOpenHelper {
             values.put("cliNome", c.getNome());
             values.put("cliCpf", c.getCpf());
             values.put("cliTelefone", c.getTelefone());
-            values.put("cliEndereco", c.getEndereco());
             values.put("cliEmail", c.getEmail());
-            values.put("cliSenha", c.getSenha());
             // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
                 // insert into contato values (...)
                 id = db.insert(TABELA1, "", values);
@@ -149,13 +165,11 @@ public class DataBase extends SQLiteOpenHelper {
                     clientes.add(cliente);
 
                     // recupera os atributos de contatos
-                    cliente.setCodigo(c.getLong(c.getColumnIndex("cliCodigo")));
+                    cliente.setCodigo(c.getDouble(c.getColumnIndex("cliCodigo")));
                     cliente.setCpf(c.getLong(c.getColumnIndex("cliCpf")));
                     cliente.setNome(c.getString(c.getColumnIndex("cliNome")));
                     cliente.setTelefone(c.getLong(c.getColumnIndex("cliTelefone")));
-                    cliente.setEndereco(c.getString(c.getColumnIndex("cliEndereco")));
                     cliente.setEmail(c.getString(c.getColumnIndex("cliEmail")));
-                    cliente.setSenha(c.getString(c.getColumnIndex("cliSenha")));
                 } while (c.moveToNext());
             }
             return clientes;
@@ -174,13 +188,11 @@ public class DataBase extends SQLiteOpenHelper {
                 clientes.add(cliente);
 
                 // recupera os atributos de contatos
-                cliente.setCodigo(c.getLong(c.getColumnIndex("cliCodigo")));
+                cliente.setCodigo(c.getDouble(c.getColumnIndex("cliCodigo")));
                 cliente.setCpf(c.getLong(c.getColumnIndex("cliCpf")));
                 cliente.setNome(c.getString(c.getColumnIndex("cliNome")));
                 cliente.setTelefone(c.getLong(c.getColumnIndex("cliTelefone")));
-                cliente.setEndereco(c.getString(c.getColumnIndex("cliEndereco")));
                 cliente.setEmail(c.getString(c.getColumnIndex("cliEmail")));
-                cliente.setSenha(c.getString(c.getColumnIndex("cliSenha")));
             } while (c.moveToNext());
         }
         return clientes;
@@ -294,22 +306,15 @@ public class DataBase extends SQLiteOpenHelper {
         try {
 
             ContentValues values = new ContentValues();
-            values.put("pedCodigo", p.getCodigo());
-            values.put("pedStatus", p.getStatus());
             values.put("pedValor", p.getValorTotal());
+            values.put("pedData",p.getData());
             values.put("pedEndereco", p.getEndereço());
             values.put("cliente_cliCodigo", p.getCliente_codigo());
-            Log.d("[IFMG]","DATA BASE PEDIDO"+ p.toString());
+            Log.d("[IFMG]","DATA BASE PEDIDO: "+ p.toString());
 
-            /*
-            "pedValor double," +
-                "pedData text,"+
-                "pedEndereco text,"+
-             */
-
-                // insert into contato values (...)
                 id = db.insert(TABELA3, "", values);
                 return id;
+
         } finally {
             db.close();
         }
@@ -356,8 +361,10 @@ public class DataBase extends SQLiteOpenHelper {
 
                     // recupera os atributos de contatos
                     pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
-                    pedido.setStatus(c.getString(c.getColumnIndex("pedStatus")));
                     pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+                    pedido.setValorTotal(c.getDouble(c.getColumnIndex("pedValor")));
+                    pedido.setEndereço(c.getString(c.getColumnIndex("pedEndereco")));
+                    pedido.setData(c.getString(c.getColumnIndex("pedData")));
                 } while (c.moveToNext());
             }
             return pedidos;
@@ -377,10 +384,10 @@ public class DataBase extends SQLiteOpenHelper {
 
                 // recupera os atributos de contatos
                 pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
-                pedido.setStatus(c.getString(c.getColumnIndex("pedStatus")));
                 pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
                 pedido.setValorTotal(c.getDouble(c.getColumnIndex("pedValor")));
                 pedido.setEndereço(c.getString(c.getColumnIndex("pedEndereco")));
+                pedido.setData(c.getString(c.getColumnIndex("pedData")));
 
             } while (c.moveToNext());
         }
@@ -489,6 +496,214 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Insere um novo CONTATO, ou atualiza se já existe.
+    public long saveListaPedido(ListaPedido p) {
+        long id = p.getCodigo();
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put("lisPraCodigo", p.getCodigoPrato());
+
+            if (id != 0) {//SE O ID É DIFERENTE DE 0 ATUALIZA,
+
+                String _id = String.valueOf(p.getCodigo());
+                String[] whereArgs = new String[]{_id};
+
+                // update contato set values = ... where _id=?
+                int count = db.update(TABELA5, values, "lisCodigo=?", whereArgs);
+
+                return count;
+            } else { // SE O ID FOR 0, SIGNIFICA QUE NÃO TEM ID, ASSIM VAI INSERIR O DADO
+                // insert into contato values (...)
+                id = db.insert(TABELA5, "", values);
+                return id;
+            }
+        } finally {
+            db.close();
+        }
+    }
+
+    // Deleta o CONTATO
+    public int deleteListPedido(ListaPedido p) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            // delete from contato where _id=?
+            int count = db.delete(TABELA5, "lisCodigo=?", new String[]{String.valueOf(p.getCodigo())});
+            Log.i(TAG, "Deletou [" + count + "] registro.");
+            return count;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    // Consulta a lista com todos os contatos
+    public List<ListaPedido> ListaPedido_findAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            // select * from cliente
+            Cursor c = db.query(TABELA5, null, null, null, null, null, null, null);
+
+            return ListaPedido_toList(c);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Consulta por sql testar depois
+    public List<ListaPedido> ListaPedido_findBySql(String sql) {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor c = db.rawQuery(sql, null);
+            List<ListaPedido> pedidosPratos = new ArrayList<ListaPedido>();
+
+            if (c.moveToFirst()) {
+                do {
+                    ListaPedido pedido_prato = new ListaPedido();
+                    pedidosPratos.add(pedido_prato);
+
+                    // recupera os atributos de contatos
+                    pedido_prato.setCodigo(c.getLong(c.getColumnIndex("lisCodigo")));
+                    pedido_prato.setCodigoPrato(c.getLong(c.getColumnIndex("lisPraCodigo")));
+
+                } while (c.moveToNext());
+            }
+            return pedidosPratos;
+        } finally {
+            db.close();
+        }
+    }
+
+    // Lê o cursor e cria a lista de coatatos
+    private List<ListaPedido> ListaPedido_toList(Cursor c) {
+        List<ListaPedido> pedidos = new ArrayList<ListaPedido>();
+
+        if (c.moveToFirst()) {
+            do {
+                ListaPedido pedido_prato = new ListaPedido();
+                pedidos.add(pedido_prato);
+
+                // recupera os atributos de contatos
+                pedido_prato.setCodigo(c.getLong(c.getColumnIndex("lisCodigo")));
+                pedido_prato.setCodigoPrato(c.getLong(c.getColumnIndex("lisPraCodigo")));
+
+
+            } while (c.moveToNext());
+        }
+        return pedidos;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    // Insere um novo CONTATO, ou atualiza se já existe.
+    public long savePedidoTemp(Pedido p) {
+        long id = p.getCodigo();
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put("pedValor", p.getValorTotal());
+            values.put("pedData",p.getData());
+            values.put("pedEndereco", p.getEndereço());
+            values.put("cliente_cliCodigo", p.getCliente_codigo());
+            Log.d("[IFMG]","DATA BASE PEDIDO: "+ p.toString());
+
+            id = db.insert(TABELA6, "", values);
+            return id;
+
+        } finally {
+            db.close();
+        }
+    }
+
+    // Deleta o CONTATO
+    public int deletePedidoTemp(Pedido p) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            // delete from contato where _id=?
+            int count = db.delete(TABELA3, "pedCodigo=?", new String[]{String.valueOf(p.getCodigo())});
+            Log.i(TAG, "Deletou [" + count + "] registro.");
+            return count;
+        } finally {
+            db.close();
+        }
+    }
+
+
+    // Consulta a lista com todos os contatos
+    public List<Pedido> pedidoTemp_findAll() {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            // select * from cliente
+            Cursor c = db.query(TABELA3, null, null, null, null, null, null, null);
+
+            return pedido_toList(c);
+        } finally {
+            db.close();
+        }
+    }
+
+    // Consulta por sql testar depois
+    public List<Pedido> pedidoTemp_findBySql(String sql) {
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor c = db.rawQuery(sql, null);
+            List<Pedido> pedidos = new ArrayList<Pedido>();
+
+            if (c.moveToFirst()) {
+                do {
+                    Pedido pedido = new Pedido();
+                    pedidos.add(pedido);
+
+                    // recupera os atributos de contatos
+                    pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
+                    pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+                    pedido.setValorTotal(c.getDouble(c.getColumnIndex("pedValor")));
+                    pedido.setEndereço(c.getString(c.getColumnIndex("pedEndereco")));
+                    pedido.setData(c.getString(c.getColumnIndex("pedData")));
+                } while (c.moveToNext());
+            }
+            return pedidos;
+        } finally {
+            db.close();
+        }
+    }
+
+    // Lê o cursor e cria a lista de coatatos
+    private List<Pedido> pedidoTemp_toList(Cursor c) {
+        List<Pedido> pedidos = new ArrayList<Pedido>();
+
+        if (c.moveToFirst()) {
+            do {
+                Pedido pedido = new Pedido();
+                pedidos.add(pedido);
+
+                // recupera os atributos de contatos
+                pedido.setCodigo(c.getLong(c.getColumnIndex("pedCodigo")));
+                pedido.setCliente_codigo(c.getLong(c.getColumnIndex("cliente_cliCodigo")));
+                pedido.setValorTotal(c.getDouble(c.getColumnIndex("pedValor")));
+                pedido.setEndereço(c.getString(c.getColumnIndex("pedEndereco")));
+                pedido.setData(c.getString(c.getColumnIndex("pedData")));
+
+            } while (c.moveToNext());
+        }
+        return pedidos;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
     // Executa um SQL
